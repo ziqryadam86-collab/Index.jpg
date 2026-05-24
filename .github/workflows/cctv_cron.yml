@@ -2,10 +2,9 @@ name: Auto Update CCTV Snapshot
 
 on:
   schedule:
-    # Menggunakan sistem cron untuk berjalan secara berkala (Contoh: Setiap 15 minit)
-    # GitHub Actions paling laju boleh berjalan sekitar 5 hingga 15 minit sekali demi menjaga kestabilan pelayan.
-    - cron: '*/15 * * * *'
-  workflow_dispatch: # Butang ini membolehkan anda klik "Run" secara manual pada bila-bila masa
+    # '*/5 * * * *' bermaksud robot akan berjalan setiap 5 minit secara automatik
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Ini akan buat satu butang "Run" untuk anda test manual bila-bila masa
 
 jobs:
   update-snapshot:
@@ -20,15 +19,15 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ffmpeg
 
-    - name: Tangkap gambar dari M3U8 Cloudfront
+    - name: Tangkap gambar dari M3U8 Cloudfront (Ganti fail lama)
       run: |
         ffmpeg -i "https://d2idp3hzkhjpih.cloudfront.net/out/v1/4b85d9c2bf97413eb0c9fd875599b837/index_3.m3u8" -vframes 1 -q:v 2 index.jpg
 
-    - name: Muat naik gambar index.jpg ke GitHub Pages
+    - name: Muat naik dan ganti gambar index.jpg lama di GitHub Pages
       run: |
         git config --global user.name "GitHub Action Bot"
         git config --global user.email "action@github.com"
         git add index.jpg
-        git commit -m "Auto-update CCTV snapshot [Cloudfront]" || exit 0
+        git commit -m "Auto-update CCTV snapshot [Cloudfront - 5 Min]" || exit 0
         git push
         
